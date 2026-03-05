@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "DragCSS — Copy Visual CSS Changes for AI & Copilot",
+  "version": "1.0.0",
+  "description": "Drag any webpage element, see CSS changes live, and copy the diff to paste into Copilot, ChatGPT, or any AI.",
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "DragCSS",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

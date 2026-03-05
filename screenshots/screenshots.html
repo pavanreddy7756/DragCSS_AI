@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280">
+<title>DragCSS — Store Screenshots</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+  }
+
+  .slide {
+    width: 1280px;
+    height: 800px;
+    position: relative;
+    overflow: hidden;
+    margin: 40px auto;
+    border-radius: 16px;
+    border: 2px solid #222;
+  }
+
+  /* ─── SLIDE 1: Hero ─── */
+  .slide-1 {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1a4e 30%, #24243e 60%, #0f0c29 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .slide-1 .badge {
+    background: rgba(124, 58, 237, 0.2);
+    border: 1px solid rgba(124, 58, 237, 0.4);
+    color: #a78bfa;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+  }
+
+  .slide-1 h1 {
+    font-size: 64px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #34d399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.1;
+    margin-bottom: 20px;
+  }
+
+  .slide-1 .subtitle {
+    font-size: 24px;
+    color: #9ca3af;
+    max-width: 700px;
+    line-height: 1.5;
+    margin-bottom: 40px;
+  }
+
+  .slide-1 .subtitle strong {
+    color: #e5e7eb;
+  }
+
+  .slide-1 .features-row {
+    display: flex;
+    gap: 32px;
+    margin-top: 10px;
+  }
+
+  .slide-1 .feature-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 15px;
+    color: #d1d5db;
+  }
+
+  .slide-1 .feature-chip .icon {
+    font-size: 20px;
+  }
+
+  /* ─── SLIDE 2: How It Works ─── */
+  .slide-2 {
+    background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+    padding: 60px 80px;
+  }
+
+  .slide-2 h2 {
+    font-size: 40px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 50px;
+    color: #f0f6fc;
+  }
+
+  .steps {
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+  }
+
+  .step {
+    flex: 1;
+    max-width: 350px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid #21262d;
+    border-radius: 16px;
+    padding: 30px;
+    text-align: center;
+  }
+
+  .step-number {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 auto 16px;
+    color: #fff;
+  }
+
+  .step:nth-child(1) .step-number { background: linear-gradient(135deg, #7c3aed, #6d28d9); }
+  .step:nth-child(2) .step-number { background: linear-gradient(135deg, #2563eb, #1d4ed8); }
+  .step:nth-child(3) .step-number { background: linear-gradient(135deg, #059669, #047857); }
+
+  .step h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #f0f6fc;
+  }
+
+  .step p {
+    font-size: 15px;
+    color: #8b949e;
+    line-height: 1.6;
+  }
+
+  .step .step-visual {
+    margin-top: 20px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #30363d;
+    background: #0d1117;
+    padding: 16px;
+    text-align: left;
+  }
+
+  .step .step-visual .mock-element {
+    background: rgba(33, 150, 243, 0.08);
+    border: 2px solid #2196F3;
+    border-radius: 6px;
+    padding: 12px 16px;
+    color: #58a6ff;
+    font: 13px/1.4 'SF Mono', monospace;
+    cursor: grab;
+  }
+
+  .step .step-visual .mock-element.dragged {
+    border-color: #FF5722;
+    border-style: dashed;
+    background: rgba(255,87,34,0.06);
+    color: #ff7043;
+    transform: translate(20px, -15px);
+  }
+
+  .step .step-visual pre {
+    font: 12px/1.6 'SF Mono', 'Consolas', monospace;
+    color: #c9d1d9;
+    white-space: pre;
+  }
+
+  .step .step-visual pre .comment { color: #8b949e; }
+  .step .step-visual pre .prop { color: #79c0ff; }
+  .step .step-visual pre .val-old { color: #f85149; text-decoration: line-through; }
+  .step .step-visual pre .val-new { color: #56d364; }
+  .step .step-visual pre .arrow { color: #d2a8ff; }
+
+  /* ─── SLIDE 3: Export Panel Demo ─── */
+  .slide-3 {
+    background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+    display: flex;
+  }
+
+  .slide-3 .page-mock {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .slide-3 .page-mock .mock-browser-bar {
+    background: #21262d;
+    border-radius: 8px;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .slide-3 .page-mock .mock-browser-bar .dot {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+
+  .slide-3 .page-mock .mock-browser-bar .dot:nth-child(1) { background: #f85149; }
+  .slide-3 .page-mock .mock-browser-bar .dot:nth-child(2) { background: #e3b341; }
+  .slide-3 .page-mock .mock-browser-bar .dot:nth-child(3) { background: #56d364; }
+
+  .slide-3 .page-mock .mock-browser-bar .url {
+    flex: 1;
+    background: #0d1117;
+    border-radius: 4px;
+    padding: 6px 12px;
+    color: #8b949e;
+    font-size: 13px;
+    margin-left: 12px;
+  }
+
+  .slide-3 .page-mock .mock-page {
+    flex: 1;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 30px;
+    color: #1a1a2e;
+    position: relative;
+  }
+
+  .slide-3 .page-mock .mock-page h3 {
+    font-size: 28px;
+    margin-bottom: 12px;
+    color: #111;
+  }
+
+  .slide-3 .page-mock .mock-page p {
+    color: #555;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  .slide-3 .page-mock .mock-page .dragged-box {
+    display: inline-block;
+    background: #e8f5e9;
+    border: 2px dashed #FF5722;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-weight: 600;
+    color: #2e7d32;
+    transform: translate(40px, -10px);
+    position: relative;
+  }
+
+  .slide-3 .page-mock .mock-page .dragged-box::after {
+    content: '↕ Dragged';
+    position: absolute;
+    top: -24px;
+    right: -8px;
+    background: #FF5722;
+    color: #fff;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .slide-3 .page-mock .mock-floating-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #1a1a2e;
+    padding: 8px 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: #aaa;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    white-space: nowrap;
+  }
+
+  .slide-3 .page-mock .mock-floating-bar .bar-btn {
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    border: none;
+  }
+
+  .slide-3 .page-mock .mock-floating-bar .bar-btn.green { background: #4CAF50; color: #fff; }
+  .slide-3 .page-mock .mock-floating-bar .bar-btn.red { background: #d32f2f; color: #fff; }
+
+  .slide-3 .export-mock {
+    width: 420px;
+    background: #0d1117;
+    border-left: 1px solid #21262d;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .slide-3 .export-mock .export-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .slide-3 .export-mock .export-header h4 {
+    font-size: 15px;
+    color: #f0f6fc;
+  }
+
+  .slide-3 .export-mock .export-tabs {
+    display: flex;
+    border-bottom: 1px solid #21262d;
+  }
+
+  .slide-3 .export-mock .export-tabs span {
+    padding: 10px 20px;
+    font-size: 13px;
+    color: #8b949e;
+    border-bottom: 2px solid transparent;
+    cursor: default;
+  }
+
+  .slide-3 .export-mock .export-tabs span.active {
+    color: #f0f6fc;
+    border-bottom-color: #4CAF50;
+  }
+
+  .slide-3 .export-mock .export-body {
+    flex: 1;
+    padding: 20px;
+    overflow: hidden;
+  }
+
+  .slide-3 .export-mock .export-body pre {
+    font: 12px/1.7 'SF Mono', 'Consolas', monospace;
+    color: #c9d1d9;
+    white-space: pre;
+  }
+
+  .slide-3 .export-mock .export-body pre .comment { color: #8b949e; }
+  .slide-3 .export-mock .export-body pre .selector { color: #d2a8ff; }
+  .slide-3 .export-mock .export-body pre .prop { color: #79c0ff; }
+  .slide-3 .export-mock .export-body pre .old { color: #f85149; }
+  .slide-3 .export-mock .export-body pre .new { color: #56d364; }
+
+  .slide-3 .export-mock .export-footer {
+    display: flex;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid #21262d;
+  }
+
+  .slide-3 .export-mock .export-footer button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #30363d;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: default;
+  }
+
+  .slide-3 .export-mock .export-footer .copy-btn {
+    background: #238636;
+    border-color: #238636;
+    color: #fff;
+  }
+
+  .slide-3 .export-mock .export-footer .close-btn {
+    background: #21262d;
+    color: #c9d1d9;
+  }
+
+  /* ─── SLIDE 4: AI Prompt Mode ─── */
+  .slide-4 {
+    background: linear-gradient(135deg, #0f0c29 0%, #1a1a4e 50%, #0f0c29 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+  }
+
+  .slide-4 h2 {
+    font-size: 40px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .slide-4 .sub {
+    font-size: 18px;
+    color: #9ca3af;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .slide-4 .ai-demo {
+    width: 900px;
+    background: #0d1117;
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .slide-4 .ai-demo .ai-header {
+    padding: 12px 20px;
+    background: #161b22;
+    border-bottom: 1px solid #21262d;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #8b949e;
+  }
+
+  .slide-4 .ai-demo .ai-header .copilot-icon {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #7c3aed, #2563eb);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+
+  .slide-4 .ai-demo .ai-header strong { color: #f0f6fc; }
+
+  .slide-4 .ai-demo .ai-body {
+    padding: 24px;
+  }
+
+  .slide-4 .ai-demo .ai-body pre {
+    font: 13px/1.8 'SF Mono', 'Consolas', monospace;
+    color: #c9d1d9;
+    white-space: pre-wrap;
+  }
+
+  .slide-4 .ai-demo .ai-body pre .highlight { color: #56d364; }
+  .slide-4 .ai-demo .ai-body pre .selector-text { color: #d2a8ff; }
+  .slide-4 .ai-demo .ai-body pre .arrow-text { color: #ff7b72; }
+
+  .slide-4 .logos {
+    display: flex;
+    gap: 24px;
+    margin-top: 30px;
+    align-items: center;
+  }
+
+  .slide-4 .logos .logo-chip {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 8px 20px;
+    border-radius: 100px;
+    font-size: 14px;
+    color: #9ca3af;
+  }
+
+  /* ─── SLIDE 5: Features Grid ─── */
+  .slide-5 {
+    background: linear-gradient(180deg, #0d1117 0%, #161b22 100%);
+    padding: 60px 80px;
+  }
+
+  .slide-5 h2 {
+    font-size: 40px;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 50px;
+    color: #f0f6fc;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .feature-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #21262d;
+    border-radius: 12px;
+    padding: 28px;
+  }
+
+  .feature-card .feature-icon {
+    font-size: 28px;
+    margin-bottom: 12px;
+  }
+
+  .feature-card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #f0f6fc;
+    margin-bottom: 8px;
+  }
+
+  .feature-card p {
+    font-size: 14px;
+    color: #8b949e;
+    line-height: 1.6;
+  }
+
+  .slide-label {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    background: rgba(255,255,255,0.08);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #6b7280;
+  }
+
+  /* Instructions banner */
+  .instructions {
+    max-width: 1280px;
+    margin: 40px auto 20px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px 30px;
+    color: #c9d1d9;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .instructions h2 {
+    color: #f0f6fc;
+    margin-bottom: 10px;
+    font-size: 20px;
+  }
+
+  .instructions ol {
+    padding-left: 24px;
+  }
+
+  .instructions code {
+    background: #21262d;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+<div class="instructions">
+  <h2>📸 How to take screenshots for Chrome Web Store</h2>
+  <ol>
+    <li>Open this page in Chrome at <strong>100% zoom</strong> (Cmd+0 to reset)</li>
+    <li>For each slide below, take a screenshot of just the slide area (Cmd+Shift+4, then drag over the slide)</li>
+    <li>Each slide is exactly <strong>1280×800px</strong> — the required Chrome Web Store screenshot size</li>
+    <li>Upload all 5 screenshots in order to the Chrome Web Store listing</li>
+  </ol>
+</div>
+
+<!-- SLIDE 1: Hero -->
+<div class="slide slide-1">
+  <span class="slide-label">Screenshot 1 of 5</span>
+  <div class="badge">🚀 Free Developer Tool</div>
+  <h1>DragCSS</h1>
+  <p class="subtitle">
+    Drag any element on any webpage.<br>
+    <strong>Copy the CSS diff. Paste into AI.</strong>
+  </p>
+  <div class="features-row">
+    <div class="feature-chip"><span class="icon">🖱️</span> Drag & Drop</div>
+    <div class="feature-chip"><span class="icon">📋</span> Copy CSS Diff</div>
+    <div class="feature-chip"><span class="icon">🤖</span> AI-Ready Output</div>
+    <div class="feature-chip"><span class="icon">⚡</span> Zero Config</div>
+  </div>
+</div>
+
+<!-- SLIDE 2: How It Works (3 Steps) -->
+<div class="slide slide-2">
+  <span class="slide-label">Screenshot 2 of 5</span>
+  <h2>How It Works — 3 Steps</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-number">1</div>
+      <h3>Hover & Select</h3>
+      <p>Enable edit mode. Hover over any element to highlight it with a blue outline.</p>
+      <div class="step-visual">
+        <div class="mock-element">&lt;div class="hero-section"&gt;</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">2</div>
+      <h3>Drag to Reposition</h3>
+      <p>Click and drag the element to its new position. Changes happen in real time.</p>
+      <div class="step-visual">
+        <div class="mock-element dragged">&lt;div class="hero-section"&gt;</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-number">3</div>
+      <h3>Copy CSS Diff</h3>
+      <p>Export the before→after CSS changes. Paste directly into Copilot or any AI.</p>
+      <div class="step-visual">
+        <pre><span class="prop">position</span>: <span class="val-old">static</span> <span class="arrow">→</span> <span class="val-new">relative</span>
+<span class="prop">top</span>: <span class="val-old">auto</span> <span class="arrow">→</span> <span class="val-new">-20px</span>
+<span class="prop">left</span>: <span class="val-old">auto</span> <span class="arrow">→</span> <span class="val-new">15px</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: Export Panel Demo -->
+<div class="slide slide-3">
+  <span class="slide-label">Screenshot 3 of 5</span>
+  <div class="page-mock">
+    <div class="mock-browser-bar">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="url">https://your-app.com/dashboard</div>
+    </div>
+    <div class="mock-page">
+      <h3>Dashboard</h3>
+      <p>Welcome back! Here's your project overview with the latest metrics and analytics data for your team.</p>
+      <div class="dragged-box">📊 Analytics Widget</div>
+      <p style="margin-top:30px;font-size:13px;color:#888;">Other content continues here...</p>
+      <div class="mock-floating-bar">
+        DragCSS — <strong style="color:#eee;">2 elements modified</strong>
+        <span class="bar-btn green">Export Changes</span>
+        <span class="bar-btn red">Reset All</span>
+      </div>
+    </div>
+  </div>
+  <div class="export-mock">
+    <div class="export-header">
+      <h4>CSS Changes</h4>
+      <span style="color:#8b949e; font-size:20px; cursor:default;">×</span>
+    </div>
+    <div class="export-tabs">
+      <span class="active">CSS Diff</span>
+      <span>AI Prompt</span>
+    </div>
+    <div class="export-body">
+      <pre><span class="comment">/* DragCSS — CSS Changes */</span>
+
+<span class="comment">/* ─── .dashboard > .analytics-widget ─── */</span>
+
+<span class="comment">/* BEFORE */</span>
+<span class="selector">.dashboard > .analytics-widget</span> {
+  <span class="prop">position</span>: <span class="old">static</span>;
+  <span class="prop">top</span>: <span class="old">auto</span>;
+  <span class="prop">left</span>: <span class="old">auto</span>;
+}
+
+<span class="comment">/* AFTER (apply this) */</span>
+<span class="selector">.dashboard > .analytics-widget</span> {
+  <span class="prop">position</span>: <span class="new">relative</span>;
+  <span class="prop">top</span>: <span class="new">-10px</span>;
+  <span class="prop">left</span>: <span class="new">40px</span>;
+}</pre>
+    </div>
+    <div class="export-footer">
+      <button class="copy-btn">📋 Copy to Clipboard</button>
+      <button class="close-btn">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: AI Prompt Mode -->
+<div class="slide slide-4">
+  <span class="slide-label">Screenshot 4 of 5</span>
+  <h2 style="color:#f0f6fc;">🤖 Paste Directly Into AI</h2>
+  <p class="sub">One-click copy. AI-ready format. Works with any coding assistant.</p>
+  <div class="ai-demo">
+    <div class="ai-header">
+      <div class="copilot-icon">✦</div>
+      <strong>GitHub Copilot Chat</strong>
+      <span style="margin-left:auto;">Paste from DragCSS →</span>
+    </div>
+    <div class="ai-body">
+      <pre><span class="highlight">I made the following CSS layout changes to a webpage.</span>
+<span class="highlight">Please update my code to match these changes:</span>
+
+Element: <span class="selector-text">`div.dashboard > div.analytics-widget`</span>
+  - position: static <span class="arrow-text">→</span> relative
+  - top: auto <span class="arrow-text">→</span> -10px
+  - left: auto <span class="arrow-text">→</span> 40px
+
+Element: <span class="selector-text">`header.main-nav > ul.nav-items`</span>
+  - margin-left: 0px <span class="arrow-text">→</span> 24px
+  - margin-top: 0px <span class="arrow-text">→</span> -8px
+
+<span class="highlight">Apply the AFTER values to the corresponding CSS selectors in my codebase.</span></pre>
+    </div>
+  </div>
+  <div class="logos">
+    <div class="logo-chip">GitHub Copilot</div>
+    <div class="logo-chip">ChatGPT</div>
+    <div class="logo-chip">Claude</div>
+    <div class="logo-chip">Cursor</div>
+    <div class="logo-chip">Gemini</div>
+  </div>
+</div>
+
+<!-- SLIDE 5: Features -->
+<div class="slide slide-5">
+  <span class="slide-label">Screenshot 5 of 5</span>
+  <h2>Built for Developers</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎯</div>
+      <h3>Smart Element Selection</h3>
+      <p>Hover to highlight any element. Blue outline shows exactly what you're targeting. Works on complex UIs — Telerik, Bootstrap, Tailwind, MUI, all of them.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔀</div>
+      <h3>Real-Time CSS Tracking</h3>
+      <p>Every pixel you move is tracked. Captures computed CSS values after all stylesheets, classes, and frameworks are resolved. No guessing.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <h3>Two Export Formats</h3>
+      <p>CSS Diff for developers who want exact before/after. AI Prompt format optimized for GitHub Copilot, ChatGPT, Claude, and Cursor.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Privacy First</h3>
+      <p>Zero data collection. No analytics. No tracking. Everything runs locally in your browser. Minimal permissions — only activates when you click.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Zero Overhead</h3>
+      <p>Only activates when you click the extension. No content scripts running in the background. No impact on page performance.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">↩️</div>
+      <h3>Instant Reset</h3>
+      <p>One click to undo all changes and restore the original layout. Experiment freely without consequences.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

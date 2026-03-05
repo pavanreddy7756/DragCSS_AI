@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <div class="header">
+      <img src="icons/icon-48.png" alt="" class="logo">
+      <div>
+        <h1>DragCSS</h1>
+        <p class="subtitle">Copy Visual CSS Changes for AI</p>
+      </div>
+    </div>
+
+    <div class="status" id="status">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Inactive</span>
+    </div>
+
+    <div class="actions">
+      <button id="toggle-btn" class="btn btn-primary">Enable Edit Mode</button>
+      <button id="export-btn" class="btn btn-secondary" disabled>Export Changes</button>
+      <button id="reset-btn" class="btn btn-danger" disabled>Reset All</button>
+    </div>
+
+    <div class="help">
+      <p><strong>How to use:</strong></p>
+      <ol>
+        <li>Click <em>Enable Edit Mode</em></li>
+        <li>Hover over elements to highlight them</li>
+        <li>Drag elements to reposition</li>
+        <li>Click <em>Export Changes</em> to get CSS diff</li>
+        <li>Paste the output into Copilot or any AI tool</li>
+      </ol>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
