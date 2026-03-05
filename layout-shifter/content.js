@@ -29,6 +29,81 @@
   // Map of element → { selector, before: {prop: val}, after: {prop: val} }
   const changes = new Map();
 
+  // ─── WebSocket Client for VS Code Connection ───
+  const VSCODE_WS_PORT = 9742;
+  let ws = null;
+  let wsConnected = false;
+  let wsReconnectTimer = null;
+
+  function connectToVSCode() {
+    if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) return;
+
+    try {
+      ws = new WebSocket('ws://127.0.0.1:' + VSCODE_WS_PORT);
+
+      ws.onopen = () => {
+        wsConnected = true;
+        ws.send(JSON.stringify({ type: 'ping' }));
+        updateVSCodeStatus();
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const msg = JSON.parse(event.data);
+          if (msg.type === 'ack') {
+            showToast('Sent ' + msg.count + ' change(s) to VS Code!');
+          }
+        } catch (_) {}
+      };
+
+      ws.onclose = () => {
+        wsConnected = false;
+        ws = null;
+        updateVSCodeStatus();
+      };
+
+      ws.onerror = () => {
+        wsConnected = false;
+        ws = null;
+        updateVSCodeStatus();
+      };
+    } catch (e) {
+      wsConnected = false;
+    }
+  }
+
+  function sendToVSCode() {
+    const entries = getChangedEntries();
+    if (entries.length === 0) {
+      showToast('No changes to send.');
+      return;
+    }
+
+    if (!wsConnected || !ws) {
+      // Try to connect first, then send
+      connectToVSCode();
+      setTimeout(() => {
+        if (wsConnected && ws) {
+          ws.send(JSON.stringify({ type: 'changes', data: entries }));
+        } else {
+          showToast('Cannot connect to VS Code. Is the DragCSS extension running?');
+        }
+      }, 1000);
+      return;
+    }
+
+    ws.send(JSON.stringify({ type: 'changes', data: entries }));
+  }
+
+  function updateVSCodeStatus() {
+    if (!floatingBar) return;
+    const dot = floatingBar.querySelector('.ls-vscode-dot');
+    if (dot) {
+      dot.style.background = wsConnected ? '#4CAF50' : '#666';
+      dot.title = wsConnected ? 'VS Code connected' : 'VS Code not connected';
+    }
+  }
+
   // ─── Shadow DOM Host for all extension UI ───
   let shadowHost = null;
   let shadow = null;
@@ -265,14 +340,17 @@
     floatingBar = document.createElement('div');
     floatingBar.className = 'ls-floating-bar';
     floatingBar.innerHTML = `
+      <span class="ls-vscode-dot" style="width:8px;height:8px;border-radius:50%;background:#666;flex-shrink:0;" title="VS Code not connected"></span>
       <span class="ls-status">DragCSS — <strong>Edit Mode</strong></span>
       <button class="ls-primary" id="ls-export-btn">Export Changes</button>
+      <button style="background:#7c3aed;border-color:#7c3aed;color:#fff;" id="ls-vscode-btn">⚡ Send to VS Code</button>
       <button class="ls-danger" id="ls-reset-btn">Reset All</button>
     `;
     shadow.appendChild(floatingBar);
 
     // Wire up floating bar buttons
     shadow.getElementById('ls-export-btn').addEventListener('click', showExportPanel);
+    shadow.getElementById('ls-vscode-btn').addEventListener('click', sendToVSCode);
     shadow.getElementById('ls-reset-btn').addEventListener('click', resetAll);
 
     // Export side panel
@@ -290,6 +368,7 @@
       <div class="ls-export-body"><pre id="ls-export-content"></pre></div>
       <div class="ls-export-footer">
         <button class="ls-copy-btn" id="ls-copy-btn">Copy to Clipboard</button>
+        <button style="background:#7c3aed;border-color:#7c3aed;color:#fff;" id="ls-send-vscode">⚡ Send to VS Code</button>
         <button id="ls-close-export-2">Close</button>
       </div>
     `;
@@ -305,6 +384,7 @@
     shadow.getElementById('ls-close-export').addEventListener('click', hideExportPanel);
     shadow.getElementById('ls-close-export-2').addEventListener('click', hideExportPanel);
     shadow.getElementById('ls-copy-btn').addEventListener('click', copyToClipboard);
+    shadow.getElementById('ls-send-vscode').addEventListener('click', sendToVSCode);
 
     // Tab switching
     exportPanel.querySelectorAll('.ls-export-tab').forEach(tab => {
@@ -708,6 +788,9 @@
 
     createUI();
 
+    // Try to connect to VS Code
+    connectToVSCode();
+
     document.addEventListener('mousemove', onMouseMove, true);
     document.addEventListener('mousedown', onMouseDown, true);
     document.addEventListener('mousemove', onMouseMoveDrag, true);
@@ -724,6 +807,11 @@
     isActive = false;
     isDragging = false;
     dragTarget = null;
+
+    // Close WebSocket
+    if (ws) { ws.close(); ws = null; }
+    wsConnected = false;
+    if (wsReconnectTimer) { clearInterval(wsReconnectTimer); wsReconnectTimer = null; }
 
     document.removeEventListener('mousemove', onMouseMove, true);
     document.removeEventListener('mousedown', onMouseDown, true);

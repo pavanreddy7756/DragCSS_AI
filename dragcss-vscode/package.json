@@ -1,0 +1,85 @@
+{
+  "name": "dragcss-vscode",
+  "displayName": "DragCSS — Auto-Apply Visual CSS Changes",
+  "description": "Receives CSS changes from DragCSS Chrome extension and auto-applies them to your source files. Works with Copilot Chat.",
+  "version": "1.0.0",
+  "publisher": "dragcss",
+  "engines": {
+    "vscode": "^1.93.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./src/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "dragcss.startServer",
+        "title": "DragCSS: Start Server"
+      },
+      {
+        "command": "dragcss.stopServer",
+        "title": "DragCSS: Stop Server"
+      },
+      {
+        "command": "dragcss.applyLastChanges",
+        "title": "DragCSS: Apply Last Received Changes"
+      },
+      {
+        "command": "dragcss.showChanges",
+        "title": "DragCSS: Show Pending Changes"
+      }
+    ],
+    "configuration": {
+      "title": "DragCSS",
+      "properties": {
+        "dragcss.port": {
+          "type": "number",
+          "default": 9742,
+          "description": "WebSocket server port for DragCSS Chrome extension connection."
+        },
+        "dragcss.autoApply": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically apply CSS changes when received (without confirmation)."
+        },
+        "dragcss.autoStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically start WebSocket server when VS Code opens."
+        }
+      }
+    },
+    "chatParticipants": [
+      {
+        "id": "dragcss.chat",
+        "name": "dragcss",
+        "fullName": "DragCSS",
+        "description": "Apply visual CSS changes from DragCSS Chrome extension to your codebase",
+        "isSticky": false,
+        "commands": [
+          {
+            "name": "apply",
+            "description": "Apply the latest CSS changes to matching files"
+          },
+          {
+            "name": "show",
+            "description": "Show pending CSS changes"
+          },
+          {
+            "name": "status",
+            "description": "Show connection status"
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "package": "npx @vscode/vsce package --no-dependencies"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.93.0",
+    "@vscode/vsce": "^3.7.1"
+  }
+}
